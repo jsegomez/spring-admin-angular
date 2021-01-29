@@ -1,14 +1,21 @@
 package com.jsegomez.springadmin.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +38,7 @@ public class ClienteRestController {
 	private ClienteService clienteService;
 	
 	
-	// ============================= Método para mostrar todos los clientes =============================  
+	// =========================== Método para mostrar todos los clientes sin paginar===========================  
 	@GetMapping(path = "/")
 	public ResponseEntity<?> clientes(){
 		Map<String, Object> response = new HashMap<>();
@@ -55,6 +62,30 @@ public class ClienteRestController {
 		
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
+	
+	// ========================= Método para buscar clientes paginados =============================
+	@GetMapping(path = "/pagina/{pagina}")
+	public ResponseEntity<?> clientesPaginados(@PathVariable Integer pagina){
+		Page<Cliente> clientes;
+		Map<String, Object> response = new HashMap<>();
+		
+		try {
+			clientes = clienteService.findAll(PageRequest.of(pagina, 20));
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error al realizar consulta a la base de datos");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);					
+		}
+		
+		if(!clientes.hasContent()) {
+			response.put("mensaje", "Sin registros en la base de datos".concat(String.valueOf(clientes.getSize())));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+		}
+		
+		response.put("clientes", clientes);		
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+	}
+	
 	
 	// ============================= Método para mostrar cliente por Id =============================
 	@GetMapping(path = "/{id}")
@@ -105,9 +136,21 @@ public class ClienteRestController {
 	
 	// ============================= Método crear un nuevo cliente =============================	
 	@PostMapping(path = "/")
-	public ResponseEntity<?> save(@RequestBody Cliente cliente){
+	public ResponseEntity<?> save(@Valid @RequestBody Cliente cliente, BindingResult result){
 		Map<String, Object> response = new HashMap<>();
 		Cliente newCliente = null;
+		
+		if(result.hasErrors()) {
+			List<String> errores = new ArrayList<>();
+			result.getFieldErrors();
+			
+			for(FieldError err: result.getFieldErrors()) {
+				errores.add(err.getDefaultMessage());
+			}			
+			
+			response.put("errores", errores);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+		}
 		
 		try {
 			newCliente = clienteService.save(cliente);
@@ -123,9 +166,21 @@ public class ClienteRestController {
 	
 	// ============================= Método actualizar cliente =============================
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Cliente cliente){
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Cliente cliente, BindingResult result){
 		Map<String, Object> response = new HashMap<>();
 		Optional<Cliente> clienteDb = null;
+		
+		if(result.hasErrors()) {
+			List<String> errores = new ArrayList<>();
+			result.getFieldErrors();
+			
+			for(FieldError err: result.getFieldErrors()) {
+				errores.add(err.getDefaultMessage());
+			}			
+			
+			response.put("errores", errores);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+		}
 		
 		try {
 			clienteDb = clienteService.findById(id);
@@ -169,5 +224,20 @@ public class ClienteRestController {
 		response.put("mensaje", "Cliente eliminado con éxito");
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.ACCEPTED);
 	}
+	
+	
+	
+	// Función para validar errores
+	/*
+	private List<String> erroresForm(List<FieldError> errores) {
+		
+		for(FieldError err: errores.getFieldErrors()) {
+			errors.add(err.getDefaultMessage());
+		}
+		
+		return 
+	}
+	*/
+	
 	
 }

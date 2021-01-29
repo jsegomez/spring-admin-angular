@@ -12,6 +12,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "clientes")
@@ -24,9 +26,15 @@ public class Cliente implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-		
+	
+	@Size(min = 2, message = "Nombre debe tener un mínimo de 2 dígitos")
 	private String nombre;
+		
+	@Size(min = 2, message = "Apellido debe tener un mínimo de 2 dígitos")
 	private String apellido;
+	
+	@Email(message = "Favor ingrese un correo electrónico valido")
+	@Column(nullable = false, unique = true)
 	private String email;
 	
 	@Column(name = "create_at")
