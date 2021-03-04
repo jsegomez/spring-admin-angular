@@ -9,8 +9,10 @@ import com.jsegomez.springadmin.models.entity.Cliente;
 
 public interface IClienteDao extends JpaRepository<Cliente, Long>{
 	
+	
+	// Método para buscar clientes por email
 	@Query("Select c from  Cliente c where c.email like %?1%")
-	public List<Cliente> findByEmail(String email);
+	public Cliente findByEmail(String email);
 	
 	@Query("Select c from  Cliente c where c.nombre like %?1%")
 	public List<Cliente> findByName(String name);

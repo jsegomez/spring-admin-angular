@@ -56,8 +56,8 @@ public class ClienteServiceImpl implements ClienteService {
 	// Método para buscar clientes por email
 	@Override
 	@Transactional(readOnly = true)
-	public List<Cliente> findByEmail(String email) {
-		return (List<Cliente>) clienteDao.findByEmail(email);
+	public Cliente findByEmail(String email) {
+		return (Cliente) clienteDao.findByEmail(email);
 	}
 
 	// Método para buscar cliente por nombre

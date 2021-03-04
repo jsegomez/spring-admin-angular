@@ -26,7 +26,7 @@ public interface ClienteService {
 	public void deleteById(Long id);	
 	
 	// Método para buscar cliente por email 
-	public List<Cliente> findByEmail(String email);
+	public Cliente findByEmail(String email);
 	
 	// Método para buscar cliente por nombre
 	public List<Cliente> findByName(String name);
