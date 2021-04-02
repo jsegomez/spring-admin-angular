@@ -20,10 +20,10 @@ import org.springframework.web.filter.CorsFilter;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 
 	@Override
-	public void configure(HttpSecurity http) throws Exception {
+	public void configure(HttpSecurity http) throws Exception {		
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/clientes/pagina/*").authenticated()
-		.anyRequest().authenticated()
-		.and().cors().configurationSource(corsConfigurationSource());
+			.anyRequest().authenticated()
+			.and().cors().configurationSource(corsConfigurationSource());
 	}
 	
 	@Bean

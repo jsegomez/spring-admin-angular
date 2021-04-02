@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.jsegomez.springadmin.models.entity.Cliente;
 
-public interface IClienteDao extends JpaRepository<Cliente, Long>{
-	
+public interface IClienteDao extends JpaRepository<Cliente, Long>{	
 	
 	// Método para buscar clientes por email
 	@Query("Select c from  Cliente c where c.email like %?1%")

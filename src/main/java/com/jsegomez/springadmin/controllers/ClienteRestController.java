@@ -31,7 +31,7 @@ import com.jsegomez.springadmin.services.ClienteService;
 
 @RestController
 @RequestMapping(value = "/api/clientes")
-@CrossOrigin(origins = {"http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:4300"})
 public class ClienteRestController {
 	
 	@Autowired
@@ -102,6 +102,28 @@ public class ClienteRestController {
 		
 		if(cliente.isEmpty()) {
 			response.put("mensaje", "Cliente con id: " + id + " no existe en la base de datos");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		
+		response.put("cliente", cliente.get());
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/buscar/{id}")
+	public ResponseEntity<?> buscarCliente(@PathVariable Long id){
+		Map<String, Object> response = new HashMap<>();
+		Optional<Cliente> cliente = null;
+		
+		try {
+			cliente = clienteService.findById(id);
+		} catch (DataAccessException e) {
+			response.put("error", "hubo un error en la consulta");
+			response.put("error", e.getMessage().concat(":").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		if(cliente.isEmpty()) {
+			response.put("mensaje", "No se encontro cliente en la base de datos");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		

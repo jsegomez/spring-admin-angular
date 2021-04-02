@@ -23,7 +23,7 @@ import com.jsegomez.springadmin.services.PaisService;
 
 @RestController
 @RequestMapping(value = "/api/paises")
-@CrossOrigin(origins = {"http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:4300"})
 public class PaisController {
 	
 	@Autowired

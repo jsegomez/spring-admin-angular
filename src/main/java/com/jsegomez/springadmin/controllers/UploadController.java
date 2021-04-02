@@ -28,7 +28,7 @@ import com.jsegomez.springadmin.services.UploadImage;
 
 @RestController
 @RequestMapping(value = "/api/image")
-@CrossOrigin(origins = {"http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:4300"})
 public class UploadController {
 	
 	@Autowired
